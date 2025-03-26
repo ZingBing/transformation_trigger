@@ -74,6 +74,7 @@ Resources:
   OrchestratorFunction:
     Type: AWS::Serverless::Function
     Properties:
+      FunctionName: !Sub "${AWS::StackName}-OrchestratorFunction"
       CodeUri: lambda_functions/orchestrator/
       Handler: app.orch_lambda
       Runtime: python3.13
@@ -99,6 +100,15 @@ Resources:
           SQL_DOCUMENT_INGEST_FUNCTION: !Ref SQLDocumentIngestFunction
           OPENSEARCH_COMMENT_INGEST_FUNCTION: !Ref OpenSearchCommentFunction
   
+  OrchestratorLambdaPermission:
+  Type: AWS::Lambda::Permission
+  Properties:
+    FunctionName: !Ref OrchestratorFunction
+    Action: lambda:InvokeFunction
+    Principal: s3.amazonaws.com
+    SourceAccount: <AccountB_ID>          # The bucket's account ID
+    SourceArn: arn:aws:s3:::mirrulations
+
   # # Permission to allow S3 to invoke the Lambda
   # OrchestratorFunctionS3Permission:
   #   Type: AWS::Lambda::Permission
